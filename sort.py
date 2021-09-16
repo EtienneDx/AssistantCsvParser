@@ -3,6 +3,7 @@ import datetime
 import os
 import re
 import argparse
+import shutil
 
 parser = argparse.ArgumentParser(description="Ce script sert a générer les fichiers csv permettant le suivi des assistants")
 parser.add_argument("-c", "--clean", dest="clean", action="store_true", help="Vide le répértoire de sortie avant de générer les fichiers")
@@ -34,7 +35,7 @@ with open(args.matieres) as matieres:
             m = m.split(";")[0]
             classes.append([m, re.compile(m), presOnly])# on les compile en regex pour les accents qui foutent le bazar
 with open(args.planning) as csvfile:
-    csvreader = csv.DictReader(csvfile, delimiter=';')# lecture du fichier
+    csvreader = csv.DictReader(csvfile, delimiter='\t')# lecture du fichier
     i = 0
     for row in csvreader:# chaque ligne
         if i == 0:
