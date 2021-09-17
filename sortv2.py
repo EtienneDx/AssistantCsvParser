@@ -8,7 +8,22 @@ import shutil
 NOM_SAL = "NOM_SAL"
 NOM_TD = "NOM_DIP"
 NOM_ENS = "NOM_ENS"
+DDEBUT = "DDEBUT"
+HDEBUT = "HDEBUT"
+HFIN = "HFIN"
 DAYS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
+
+def parseSalle(salle):
+            
+    resalle = re.compile(r"([a-zA-Z0-9]+ [^-<>]+- [^ \(]+)")
+    g = resalle.finditer(salle)
+    ns = ""
+    for m in g:
+        ns = ns + (", " if ns != "" else "") + m[1]
+    if ns != "":
+        return ns
+    return salle
+
 
 def parseFile(in_path, out_path, label):
         
@@ -22,19 +37,7 @@ def parseFile(in_path, out_path, label):
                 if i:
                     labels = list(row.keys())# recup des labels
                     i = False
-                # row[NOM_SAL] = row[NOM_SAL].replace("(Meet-up)", "").replace("(Labo)", "");
                 data.append(row)
-            
-        # groups = {}
-        # for i, val in enumerate(data):
-        #     if not data[NOM_TD] in groups:
-        #         groups[data[NOM_TD]] = [data]
-        #     else:
-        #         groups[data[NOM_TD]].append(data)
-        # keys = sorted(groups.keys())
-        # for key in keys:
-
-        resalle = re.compile(r"([a-zA-Z0-9]+ [^-<>]+- [^ \(]+)")
 
         # Creation du tableau pour rassembler les cours d'une meme matiere
         mat = {}
@@ -46,19 +49,12 @@ def parseFile(in_path, out_path, label):
                     "COURS": []
                 }
 
-            salle = row[NOM_SAL]
-            g = resalle.finditer(salle)
-            ns = ""
-            for m in g:
-                ns = ns + (", " if ns != "" else "") + m[1]
-            if ns != "":
-                salle = ns
-
+            salle = parseSalle(row[NOM_SAL])
 
             mat[grp_nom]["COURS"].append({
-                "DATE": DAYS[datetime.datetime.strptime((row["DDEBUT"]), "%d/%m/%Y").weekday()] + " " + row["DDEBUT"][0:5],
-                "WEEK": datetime.datetime.strptime((row["DDEBUT"]), "%d/%m/%Y").isocalendar()[1],
-                "HEURE": row["HDEBUT"] + " - " + row["HFIN"],
+                "DATE": DAYS[datetime.datetime.strptime((row[DDEBUT]), "%d/%m/%Y").weekday()] + " " + row[DDEBUT][0:5],
+                "WEEK": datetime.datetime.strptime((row[DDEBUT]), "%d/%m/%Y").isocalendar()[1],
+                "HEURE": row[HDEBUT] + " - " + row[HFIN],
                 "SALLE": salle
             })
         # utilité de tri
