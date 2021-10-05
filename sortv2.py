@@ -25,13 +25,13 @@ def parseSalle(salle):
     return salle
 
 
-def parseFile(in_path, out_path, label):
+def parseFile(in_path, out_path, label, separator):
         
         labels = []
         data = []
         classes = []
         with open(in_path) as inCsv:
-            csvreader = csv.DictReader(inCsv, delimiter='\t')# lecture du fichier
+            csvreader = csv.DictReader(inCsv, delimiter=separator)# lecture du fichier
             i = True
             for row in csvreader:# chaque ligne
                 if i:
@@ -132,5 +132,5 @@ for filename in os.listdir(args.planning):
     f = os.path.join(args.planning, filename)
     # checking if it is a file
     if os.path.isfile(f) and f.endswith(".csv"):
-        parseFile(f, os.path.join(args.output, filename), ".".join(filename.split(".")[:-1]))
+        parseFile(f, os.path.join(args.output, filename), ".".join(filename.split(".")[:-1]), args.separator)
                 
